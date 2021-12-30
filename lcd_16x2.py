@@ -120,13 +120,22 @@ def main():
 
 def lcd_init():
   # Initialise display
-  lcd_byte(0x33,LCD_CMD) # 110011 Initialise
-  lcd_byte(0x32,LCD_CMD) # 110010 Initialise
-  lcd_byte(0x06,LCD_CMD) # 000110 Cursor move direction
-  lcd_byte(0x0C,LCD_CMD) # 001100 Display On,Cursor Off, Blink Off
-  lcd_byte(0x28,LCD_CMD) # 101000 Data length, number of lines, font size
-  lcd_byte(0x01,LCD_CMD) # 000001 Clear display
-  time.sleep(E_DELAY)
+  init_cmds = [ 
+  		0x33, # 110011 Initialise
+  		0x32, # 110010 Initialise
+  		0x06, # 000110 Cursor move direction
+  		0x0C, # 001100 Display On,Cursor Off, Blink Off
+  		0x28, # 101000 Data length, number of lines, font size
+  		0x01  # 000001 Clear display
+  ]
+
+  ## For some reason, during initialization,
+  ## it needs extra delay
+  for cmd in init_cmds:
+    time.sleep(3*E_DELAY)
+    lcd_byte(cmd,LCD_CMD)
+  time.sleep(3*E_DELAY)
+
 
 def lcd_byte(bits, mode):
   # Send byte to data pins
