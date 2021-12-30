@@ -22,6 +22,7 @@
 import RPi.GPIO as GPIO
 import time
 import datetime
+import threading
 
 # Define GPIO to LCD mapping
 LCD_RS = 20
@@ -44,22 +45,26 @@ LCD_LINE_2 = 0xC0 # LCD RAM address for the 2nd line
 E_PULSE = 0.0005
 E_DELAY = 0.0005
 
+lcd_line1 = ''
+lcd_line2 = ''
+
 def main():
   # Main program block
   
   GPIO.setwarnings(False)
   GPIO.setmode(GPIO.BCM)       # Use BCM GPIO numbers
-  GPIO.setup(LCD_E, GPIO.OUT)  # E
-  GPIO.setup(LCD_RS, GPIO.OUT) # RS
-  GPIO.setup(LCD_D4, GPIO.OUT) # DB4
-  GPIO.setup(LCD_D5, GPIO.OUT) # DB5
-  GPIO.setup(LCD_D6, GPIO.OUT) # DB6
-  GPIO.setup(LCD_D7, GPIO.OUT) # DB7
-
 
   # Initialise display
   lcd_init()
-  lcd_display_time()
+
+  t_lcd = threading.Thread(target=lcd_display_time)
+
+  t_lcd.start()
+
+  t_lcd.join()
+
+
+
 
 def lcd_display_time():
 
@@ -71,14 +76,25 @@ def lcd_display_time():
 		## 12:11:30 Fri 11Feb1990
 		temp_str = now.strftime("%H:%M:%S %a %d%b%Y")
 
+		led_line_1 = temp_str[:8]
+		led_line_2 = temp_str[9:]
+
 		## display in the LCD
-		lcd_string(temp_str[:8],LCD_LINE_1)
-		lcd_string(temp_str[9:],LCD_LINE_2)
+		lcd_string(led_line_1,LCD_LINE_1)
+		lcd_string(led_line_2,LCD_LINE_2)
 
 		time.sleep(0.8)
 
 
 def lcd_init():
+  ## setup ports
+  GPIO.setup(LCD_E, GPIO.OUT)  # E
+  GPIO.setup(LCD_RS, GPIO.OUT) # RS
+  GPIO.setup(LCD_D4, GPIO.OUT) # DB4
+  GPIO.setup(LCD_D5, GPIO.OUT) # DB5
+  GPIO.setup(LCD_D6, GPIO.OUT) # DB6
+  GPIO.setup(LCD_D7, GPIO.OUT) # DB7
+
   # Initialise display
   init_cmds = [ 
   		0x33, # 110011 Initialise
