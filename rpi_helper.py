@@ -23,6 +23,10 @@ import RPi.GPIO as GPIO
 import time
 import datetime
 import threading
+import board
+import adafruit_dht
+import psutil
+
 
 # Define GPIO to LCD mapping
 LCD_RS = 20
@@ -48,6 +52,13 @@ E_DELAY = 0.0005
 lcd_line1 = ''
 lcd_line2 = ''
 
+## to configure DHT11
+dhtDevice = adafruit_dht.DHT11(board.D6)
+
+celcius = 0.0
+humid = 0.0
+
+
 def main():
   # Main program block
   
@@ -58,15 +69,35 @@ def main():
   lcd_init()
 
   t_lcd = threading.Thread(target=lcd_display_time)
+  t_dht = threading.Thread(target=dht_monitor)
 
   t_lcd.start()
+  t_dht.start()
 
   t_lcd.join()
+  t_dht.join()
 
 
+def dht_monitor():
+	global humid
+	global celcius
+
+	while True:
+		try:
+			humid, celcius = dhtDevice.humidity, dhtDevice.temperature
+			time.sleep(60)
+			#print (' HERE: {:>7.1f} {:>7.1f}'.format(humid, celcius))
+		except RuntimeError as error:
+			print(error.args[0])
+			## retry after 2 sec
+			time.sleep(2)
+		except Exception as error:
+			dhtDevice.exit()
+			raise error
 
 
 def lcd_display_time():
+	global celcius
 
 	while True:
 		## get current date/time
@@ -76,7 +107,7 @@ def lcd_display_time():
 		## 12:11:30 Fri 11Feb1990
 		temp_str = now.strftime("%H:%M:%S %a %d%b%Y")
 
-		led_line_1 = temp_str[:8]
+		led_line_1 = temp_str[:8] + '{:>7.1f}C'.format(celcius)
 		led_line_2 = temp_str[9:]
 
 		## display in the LCD
@@ -182,4 +213,5 @@ if __name__ == '__main__':
   finally:
     lcd_byte(0x01, LCD_CMD)
     lcd_string("Goodbye!",LCD_LINE_1)
+    dhtDevice.exit()
     GPIO.cleanup()

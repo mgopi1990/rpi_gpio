@@ -26,7 +26,7 @@ LCD (4bit mode)  winstar wh1602b-yyc-jt#000
 16 LCD -	GND
 
 
-Temporature sensor
+Temperature sensor (DHT11)
 1 3V   
 2 out	GPIO6 31  
 3 Gnd
