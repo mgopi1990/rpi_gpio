@@ -108,9 +108,9 @@ def lcd_init():
   ## For some reason, during initialization,
   ## it needs extra delay
   for cmd in init_cmds:
-    time.sleep(3*E_DELAY)
+    time.sleep(10*E_DELAY)
     lcd_byte(cmd,LCD_CMD)
-  time.sleep(3*E_DELAY)
+  time.sleep(10*E_DELAY)
 
 
 def lcd_byte(bits, mode):
