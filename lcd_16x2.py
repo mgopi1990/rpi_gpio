@@ -52,6 +52,7 @@
 #import
 import RPi.GPIO as GPIO
 import time
+import datetime
 
 # Define GPIO to LCD mapping
 LCD_RS = 20
@@ -89,6 +90,23 @@ def main():
 
   # Initialise display
   lcd_init()
+  lcd_display_time()
+
+def lcd_display_time():
+
+	while True:
+		## get current date/time
+		now = datetime.datetime.now()
+
+		## format temp_str
+		## 12:11:30 Fri 11Feb1990
+		temp_str = now.strftime("%H:%M:%S %a %d%b%Y")
+
+		## display in the LCD
+		lcd_string(temp_str[:8],LCD_LINE_1)
+		lcd_string(temp_str[9:],LCD_LINE_2)
+
+		time.sleep(0.8)
 
 
 def lcd_init():
