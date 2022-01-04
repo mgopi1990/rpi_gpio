@@ -4,19 +4,24 @@
 # 1 : GND
 # 2 : 5V
 # 3 : Contrast (0-5V)*
-# 4 : RS (Register Select)
+# 4 : RS (Register Select)		GPIO20
 # 5 : R/W (Read Write)       - GROUND THIS PIN
-# 6 : Enable or Strobe
+# 6 : Enable or Strobe			GPIO26
 # 7 : Data Bit 0             - NOT USED
 # 8 : Data Bit 1             - NOT USED
 # 9 : Data Bit 2             - NOT USED
 # 10: Data Bit 3             - NOT USED
-# 11: Data Bit 4
-# 12: Data Bit 5
-# 13: Data Bit 6
-# 14: Data Bit 7
+# 11: Data Bit 4				GPIO16
+# 12: Data Bit 5				GPIO19
+# 13: Data Bit 6				GPIO13
+# 14: Data Bit 7				GPIO12
 # 15: LCD Backlight +5V**
 # 16: LCD Backlight GND
+
+# Temperature sensor (DHT11)
+# 1 : 3V   
+# 2 : out	GPIO6 31  
+# 3 : GND
 
 #import
 import RPi.GPIO as GPIO
